@@ -29,6 +29,7 @@ namespace Login.Controllers
         public ActionResult Register(User user)
         {
             user.Password = Hashing.HashPassword(user.Password);
+            //user.Role = ;
             myContext.Users.Add(user);
             myContext.SaveChanges();
             MailMessage mm = new MailMessage("muhammadrifqi0@gmail.com", user.Email);
@@ -56,13 +57,14 @@ namespace Login.Controllers
                 if (Hashing.ValidatePassword(user.Password, currentAccount.Password))
                 {
                     Session.Add("username", user.Username);
-                    return View("Welcome");
+                    //return View("Welcome");
+                    return RedirectToAction("Index", "Dashboard");
                 }
-                else
-                {
-                    Session.Add("username", user.Username);
-                    return View("Welcome");
-                }
+                //else
+                //{
+                //    Session.Add("username", user.Username);
+                //    return View("Welcome");
+                //}
             }
             ViewBag.error = "Invalid";
             return View("Index");
