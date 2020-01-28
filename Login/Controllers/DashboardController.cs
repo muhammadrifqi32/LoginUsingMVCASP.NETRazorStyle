@@ -11,7 +11,14 @@ namespace Login.Controllers
         // GET: Dashboard
         public ActionResult Index()
         {
+            if (Session["id"] != null)
+            {
             return View();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Users");
+            }
         }
     }
 }

@@ -56,6 +56,7 @@ namespace Login.Controllers
             {
                 if (Hashing.ValidatePassword(user.Password, currentAccount.Password))
                 {
+                    Session["id"] = user.id;
                     Session.Add("username", user.Username);
                     //return View("Welcome");
                     return RedirectToAction("Index", "Dashboard");
@@ -72,6 +73,7 @@ namespace Login.Controllers
 
         public ActionResult Logout()
         {
+            Session.Remove("id");
             Session.Remove("username");
             return RedirectToAction("Index", "Users");
         }
