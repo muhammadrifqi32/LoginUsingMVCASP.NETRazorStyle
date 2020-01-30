@@ -89,10 +89,10 @@
                             <a href="#" class="waves-effect">Welcome @Session["username"]</a>
                         </li>
                         <li>
-                            <a href="index.html" class="waves-effect"><i class="fa fa-tasks m-r-10" aria-hidden="true"></i>Role</a>
+                            <a href="@Url.Action("Index","Roles")" class="waves-effect"><i class="fa fa-tasks m-r-10" aria-hidden="true"></i>Role</a>
                         </li>
                         <li>
-                            <a href="index.html" class="waves-effect"><i class="fa fa-user m-r-10" aria-hidden="true"></i>User</a>
+                            <a href="@Url.Action("Index","Employees")" class="waves-effect"><i class="fa fa-user m-r-10" aria-hidden="true"></i>User</a>
                         </li>
                         <li>
                             <a href="@Url.Action("Logout","Users")" class="waves-effect"><i class="fa fa-sign-out m-r-10" aria-hidden="true"></i>Logout</a>

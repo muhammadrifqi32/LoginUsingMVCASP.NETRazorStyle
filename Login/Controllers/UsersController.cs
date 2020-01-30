@@ -59,15 +59,9 @@ namespace Login.Controllers
                     Session["id"] = user.id;
                     Session.Add("username", user.Username);
                     //return View("Welcome");
-                    return RedirectToAction("Index", "Dashboard");
+                    return RedirectToAction("Index", "Roles");
                 }
-                //else
-                //{
-                //    Session.Add("username", user.Username);
-                //    return View("Welcome");
-                //}
             }
-            ViewBag.error = "Invalid";
             return View("Index");
         }
 
