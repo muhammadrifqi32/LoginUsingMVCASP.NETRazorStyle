@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -115,13 +116,7 @@ namespace Login.Controllers
         public JsonResult List()
         {
             List<Role> RoleList = new List<Role>();
-
-            // Here "MyDatabaseEntities " is dbContext, which is created at time of model creation.
-
-            using (ApplicationDbContext dc = new ApplicationDbContext())
-            {
-                RoleList = dc.Roles.ToList();
-            }
+            RoleList = myContext.Roles.ToList();
 
             return new JsonResult { Data = RoleList, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
         }
@@ -144,7 +139,7 @@ namespace Login.Controllers
                 myContext.Entry(editrole).State = System.Data.Entity.EntityState.Modified;
                 result = myContext.SaveChanges();
             }
-            return new JsonResult { Data = result, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+            return Json(result);
         }
         public JsonResult GetById(int id)
         {
@@ -158,6 +153,13 @@ namespace Login.Controllers
             myContext.Roles.Remove(delete);
             result = myContext.SaveChanges();
             return new JsonResult { Data = result, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+        }
+        public JsonResult LoadRole()
+        {
+            List<Role> RoleList = new List<Role>();
+            RoleList = myContext.Roles.ToList();
+
+            return new JsonResult { Data = RoleList, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
         }
     }
 }

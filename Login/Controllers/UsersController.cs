@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using Login.Models;
 using Login.Util;
+using Login.ViewModel;
 
 namespace Login.Controllers
 {
@@ -26,27 +27,35 @@ namespace Login.Controllers
         }
 
         [HttpPost]
-        public ActionResult Register(User user)
+        public ActionResult Register(UserVM userVM)
         {
-            user.Password = Hashing.HashPassword(user.Password);
-            //user.Role = ;
-            myContext.Users.Add(user);
-            myContext.SaveChanges();
-            MailMessage mm = new MailMessage("muhammadrifqi0@gmail.com", user.Email);
-            mm.Subject = "[Password] " + DateTime.Now.ToString("ddMMyyyyhhmmss");
-            mm.Body = "Hi " + user.Username + "\nThis Is Your New Password : " + user.Password;
+            var user = myContext.Users.Where(u => u.Email == userVM.Email).SingleOrDefault();
+            if (user == null)
+            {
+                var push = new User(userVM);
+                var roleid = myContext.Roles.FirstOrDefault(r => r.id == 2016);
+                push.Password = Hashing.HashPassword(userVM.Password);
+                push.Role = roleid;
+                myContext.Users.Add(push);
+                myContext.SaveChanges();
+                //MailMessage mm = new MailMessage("muhammadrifqi0@gmail.com", userVM.Email);
+                //mm.Subject = "[Password] " + DateTime.Now.ToString("ddMMyyyyhhmmss");
+                //mm.Body = "Hi " + userVM.Username + "\nThis Is Your New Password : " + userVM.Password;
 
-            SmtpClient smtp = new SmtpClient();
-            smtp.Host = "smtp.gmail.com";
-            smtp.Port = 587;
-            smtp.EnableSsl = true;
+                //SmtpClient smtp = new SmtpClient();
+                //smtp.Host = "smtp.gmail.com";
+                //smtp.Port = 587;
+                //smtp.EnableSsl = true;
 
-            NetworkCredential nc = new NetworkCredential("muhammadrifqi0@gmail.com", "085376886737");
-            smtp.UseDefaultCredentials = false;
-            smtp.Credentials = nc;
-            smtp.Send(mm);
-            ViewBag.Message = "Password Has Been Sent.Check your email to login";
-            return RedirectToAction("Index", "Users");
+                //NetworkCredential nc = new NetworkCredential("muhammadrifqi0@gmail.com", "085376886737");
+                //smtp.UseDefaultCredentials = false;
+                //smtp.Credentials = nc;
+                //smtp.Send(mm);
+                //ViewBag.Message = "Password Has Been Sent.Check your email to login";
+                return RedirectToAction("Index", "Users");
+            }
+            ViewBag.error = "Email Has Been Used";
+            return View();
         }
         [HttpPost]
         public ActionResult Login(User user)
