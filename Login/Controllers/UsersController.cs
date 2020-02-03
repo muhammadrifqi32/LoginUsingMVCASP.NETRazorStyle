@@ -38,20 +38,6 @@ namespace Login.Controllers
                 push.Role = roleid;
                 myContext.Users.Add(push);
                 myContext.SaveChanges();
-                //MailMessage mm = new MailMessage("muhammadrifqi0@gmail.com", userVM.Email);
-                //mm.Subject = "[Password] " + DateTime.Now.ToString("ddMMyyyyhhmmss");
-                //mm.Body = "Hi " + userVM.Username + "\nThis Is Your New Password : " + userVM.Password;
-
-                //SmtpClient smtp = new SmtpClient();
-                //smtp.Host = "smtp.gmail.com";
-                //smtp.Port = 587;
-                //smtp.EnableSsl = true;
-
-                //NetworkCredential nc = new NetworkCredential("muhammadrifqi0@gmail.com", "085376886737");
-                //smtp.UseDefaultCredentials = false;
-                //smtp.Credentials = nc;
-                //smtp.Send(mm);
-                //ViewBag.Message = "Password Has Been Sent.Check your email to login";
                 return RedirectToAction("Index", "Users");
             }
             ViewBag.error = "Email Has Been Used";

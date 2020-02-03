@@ -37,7 +37,7 @@ function loadEmployees() {
             //debugger;
             var html = '';
             $.each(result, function (key, Employee) {
-                debugger;
+                //debugger;
                 html += '<tr>';
                 html += '<td>' + Employee.Email + '</td>';
                 html += '<td>' + Employee.Username + '</td>';
@@ -58,7 +58,7 @@ function loadEmployees() {
 
 var Roles = []
 function LoadRole(element) {
-    debugger;
+    //debugger;
     if (Roles.length == 0) {
         $.ajax({
             type: "Get",
@@ -75,7 +75,7 @@ function LoadRole(element) {
 }
 
 function renderRole(element) {
-    debugger;
+    //debugger;
     var $ele = $(element);
     $ele.empty();
     $.each(Roles, function (i, val) {
@@ -86,31 +86,59 @@ LoadRole($('#Role'));
 
 function Save() {
     debugger;
-    var User = new Object();
-    User.Email = $('#Email').val();
-    User.Username = $('#Username').val();
-    User.Role = $('#Role').val();
-    $.ajax({
-        type: 'POST',
-        url: '/Employees/InsertOrUpdate/',
-        data: User
-    }).then((result) => {
-        debugger;
-        if (result > 0) {
-            Swal.fire({
-                position: 'center',
-                type: 'success',
-                title: 'User Added Successfully'
-            });
-            loadEmployees();
-        } else {
-            Swal.fire('Error', 'Failed to Delete', 'error');
-            ClearScreen();
-        }
-    })
+    if ($('#Email').val() == 0) {
+        Swal.fire({
+            position: 'center',
+            type: 'error',
+            title: 'Please Full Fill The Email',
+            showConfirmButton: false,
+            timer: 1500
+        });
+    } else if ($('#Username').val() == 0) {
+        Swal.fire({
+            position: 'center',
+            type: 'error',
+            title: 'Please Full Fill The Role Name',
+            showConfirmButton: false,
+            timer: 1500
+        });
+    }
+    //else if ($('#Role').val() == 0) {
+    //    Swal.fire({
+    //        position: 'center',
+    //        type: 'error',
+    //        title: 'Please Select The Role',
+    //        showConfirmButton: false,
+    //        timer: 1500
+    //    });
+    //}
+    else {
+        var User = new Object();
+        User.Email = $('#Email').val();
+        User.Username = $('#Username').val();
+        User.Role = $('#Role').val();
+        $.ajax({
+            type: 'POST',
+            url: '/Employees/InsertOrUpdate/',
+            data: User
+        }).then((result) => {
+            debugger;
+            if (result > 0) {
+                Swal.fire({
+                    position: 'center',
+                    type: 'success',
+                    title: 'User Added Successfully'
+                });
+                loadEmployees();
+            } else {
+                Swal.fire('Error', 'Failed to Delete', 'error');
+                ClearScreen();
+            }
+        })
+    }
 }
 function GetbyId(id) {
-    debugger;
+    //debugger;
     $.ajax({
         url: "/Employees/GetbyId/",
         type: "GET",
@@ -118,7 +146,7 @@ function GetbyId(id) {
         dataType: "json",
         data: { id: id },
         success: function (result) {
-            debugger;
+            //debugger;
             $('#Id').val(result.id);
             $('#Email').val(result.Email);
             $('#Username').val(result.Username);
@@ -134,29 +162,57 @@ function GetbyId(id) {
 }
 function Update() {
     //debugger;
-    var User = new Object();
-    User.id = $('#Id').val();
-    User.Email = $('#Email').val();
-    User.Username = $('#Username').val();
-    User.Role = $('#Role').val();
-    $.ajax({
-        type: "POST",
-        url: '/Employees/InsertOrUpdate/',
-        data: User
-    }).then((result) => {
-        debugger;
-        if (result > 0) {
-            Swal.fire({
-                position: 'center',
-                type: 'success',
-                title: 'User Updated Successfully'
-            });
-            loadRole();
-        } else {
-            Swal.fire('Error', 'Failed to Delete', 'error');
-            ClearScreen();
-        }
-    })
+    if ($('#Email').val() == 0) {
+        Swal.fire({
+            position: 'center',
+            type: 'error',
+            title: 'Please Full Fill The Email',
+            showConfirmButton: false,
+            timer: 1500
+        });
+    } else if ($('#Username').val() == 0) {
+        Swal.fire({
+            position: 'center',
+            type: 'error',
+            title: 'Please Full Fill The Role Name',
+            showConfirmButton: false,
+            timer: 1500
+        });
+    }
+    //else if ($('#Role').val() == 0) {
+    //    Swal.fire({
+    //        position: 'center',
+    //        type: 'error',
+    //        title: 'Please Select The Role',
+    //        showConfirmButton: false,
+    //        timer: 1500
+    //    });
+    //}
+    else {
+        var User = new Object();
+        User.id = $('#Id').val();
+        User.Email = $('#Email').val();
+        User.Username = $('#Username').val();
+        User.Role = $('#Role').val();
+        $.ajax({
+            type: "POST",
+            url: '/Employees/InsertOrUpdate/',
+            data: User
+        }).then((result) => {
+            //debugger;
+            if (result > 0) {
+                Swal.fire({
+                    position: 'center',
+                    type: 'success',
+                    title: 'User Updated Successfully'
+                });
+                loadEmployees();
+            } else {
+                Swal.fire('Error', 'Failed to Delete', 'error');
+                ClearScreen();
+            }
+        })
+    }
 }
 function Delete(id) {
     //debugger;

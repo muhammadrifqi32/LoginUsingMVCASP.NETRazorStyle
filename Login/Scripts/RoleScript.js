@@ -53,26 +53,36 @@ function loadRole() {
 
 function Save() {
     //debugger;
-    var Role = new Object();
-    Role.Name = $('#Name').val();
-    $.ajax({
-        type: 'POST',
-        url: '/Roles/InsertOrUpdate/',
-        data: Role
-    }).then((result) => {
-        debugger;
-        if (result > 0) {
-            Swal.fire({
-                position: 'center',
-                type: 'success',
-                title: 'Role Added Successfully'
-            });
-            loadRole();
-        } else {
-            Swal.fire('Error', 'Failed to Delete', 'error');
-            ClearScreen();
-        }
-    })
+    if ($('#Name').val() == 0) {
+        Swal.fire({
+            position: 'center',
+            type: 'error',
+            title: 'Please Full Fill The Role Name',
+            showConfirmButton: false,
+            timer: 1500
+        });
+    } else {
+        var Role = new Object();
+        Role.Name = $('#Name').val();
+        $.ajax({
+            type: 'POST',
+            url: '/Roles/InsertOrUpdate/',
+            data: Role
+        }).then((result) => {
+            debugger;
+            if (result > 0) {
+                Swal.fire({
+                    position: 'center',
+                    type: 'success',
+                    title: 'Role Added Successfully'
+                });
+                loadRole();
+            } else {
+                Swal.fire('Error', 'Failed to Delete', 'error');
+                ClearScreen();
+            }
+        })
+    }
 }
 function GetbyId(id) {
     debugger;
@@ -97,27 +107,37 @@ function GetbyId(id) {
 }
 function Update() {
     //debugger;
-    var Role = new Object();
-    Role.id = $('#Id').val();
-    Role.Name = $('#Name').val();
-    $.ajax({
-        type: "POST",
-        url: '/Roles/InsertOrUpdate/',
-        data: Role
-    }).then((result) => {
-        debugger;
-        if (result > 0) {
-            Swal.fire({
-                position: 'center',
-                type: 'success',
-                title: 'Role Updated Successfully'
-            });
-            loadRole();
-        } else {
-            Swal.fire('Error', 'Failed to Delete', 'error');
-            ClearScreen();
-        }
-    })
+    if ($('#Name').val() == 0) {
+        Swal.fire({
+            position: 'center',
+            type: 'error',
+            title: 'Please Full Fill The Role Name',
+            showConfirmButton: false,
+            timer: 1500
+        });
+    } else {
+        var Role = new Object();
+        Role.id = $('#Id').val();
+        Role.Name = $('#Name').val();
+        $.ajax({
+            type: "POST",
+            url: '/Roles/InsertOrUpdate/',
+            data: Role
+        }).then((result) => {
+            debugger;
+            if (result > 0) {
+                Swal.fire({
+                    position: 'center',
+                    type: 'success',
+                    title: 'Role Updated Successfully'
+                });
+                loadRole();
+            } else {
+                Swal.fire('Error', 'Failed to Delete', 'error');
+                ClearScreen();
+            }
+        })
+    }
 }
 function Delete(id) {
     //debugger;
