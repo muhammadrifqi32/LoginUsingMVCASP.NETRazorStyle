@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Dapper;
 using Login.Models;
+using Login.ViewModel;
 using Newtonsoft.Json;
 
 namespace Login.Controllers
@@ -16,6 +20,7 @@ namespace Login.Controllers
     {
         ApplicationDbContext myContext = new ApplicationDbContext();
         object result = null;
+        SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString());
 
         // GET: Dashboard
         public ActionResult Index()
@@ -30,95 +35,15 @@ namespace Login.Controllers
             }
         }
 
-
-        public ActionResult Details(int id)
+        public async Task<ActionResult> List()
         {
-            var list = myContext.Roles.Find(id);
-            return View(list);
-        }
+            var result = await con.QueryAsync<RoleVM>("EXEC SP_GetRoleList");
+            return Json(new { data = result }, JsonRequestBehavior.AllowGet);
 
-        // GET: Roles/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
+            //List<Role> RoleList = new List<Role>();
+            //RoleList = myContext.Roles.ToList();
 
-        // POST: Roles/Create
-        [HttpPost]
-        public ActionResult Create(Role role)
-        {
-            try
-            {
-                // TODO: Add insert logic here
-                myContext.Roles.Add(role);
-                myContext.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-
-
-        // GET: Roles/Edit/5
-        public ActionResult Edit(int id)
-        {
-            var edit = myContext.Roles.Find(id);
-            return View(edit);
-        }
-
-        // POST: Roles/Edit/5
-        [HttpPost]
-        public ActionResult Edit(int id, Role role)
-        {
-            try
-            {
-                // TODO: Add update logic here
-                var editrole = myContext.Roles.Find(id);
-                editrole.Name = role.Name;
-                myContext.Entry(editrole).State = System.Data.Entity.EntityState.Modified;
-                var result = myContext.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Roles/Delete/5
-        public ActionResult Delete(int id)
-        {
-            var delete = myContext.Roles.Find(id);
-            return View(delete);
-        }
-
-        // POST: Roles/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, Role role)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-                var deleterole = myContext.Roles.Find(id);
-                myContext.Roles.Remove(deleterole);
-                myContext.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        public JsonResult List()
-        {
-            List<Role> RoleList = new List<Role>();
-            RoleList = myContext.Roles.ToList();
-
-            return new JsonResult { Data = RoleList, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+            //return new JsonResult { Data = RoleList, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
         }
 
         public JsonResult InsertOrUpdate(Role role)

@@ -1,13 +1,29 @@
-﻿$(document).ready(function () {
-    $('#myTable').DataTable({
-        "columnDefs": [{
-            "orderable": false,
-            "targets": 1
-        }],
-        "ajax": loadEmployees(),
-        "responsive": true
+﻿var table = null;
+
+$(document).ready(function () {
+    debugger;
+    table = $('#myTable').DataTable({
+        "ajax": {
+            url: "/Employees/List",
+            type: "GET",
+            dataType: "json"
+        },
+        "columnDefs":
+            [{
+                "targets": [3],
+                "orderable": false
+            }],
+        "columns": [
+            { "data": "Email" },
+            { "data": "Username" },
+            { "data": "RoleName" },
+            {
+                "render": function (data, type, row) {
+                    return '<button class="btn btn-warning " data-placement="left" data-toggle="tooltip" data-animation="false" title="Edit" onclick="return GetById(' + row.Id + ')"> <i class="mdi mdi-pencil"></i></button >' + '&nbsp;' +
+                        '<button class="btn btn-danger" data-placement="right" data-toggle="tooltip" data-animation="false" title="Delete" onclick="return Delete(' + row.Id + ')"> <i class="mdi mdi-eraser"></i></button >'
+                }
+            }]
     });
-    loadRole();
 });
 
 
@@ -20,41 +36,41 @@ function ClearScreen() {
     $('#Id').val('');
     $('#Email').val('');
     $('#Username').val('');
-    $('#Role').val('');
+    $('#Role_id').val('');
     $('#Update').hide();
     $('#Save').show();
 }
 
-function loadEmployees() {
-    //debugger;
-    $.ajax({
-        url: "/Employees/List",
-        type: "GET",
-        contentType: "application/json;charset=utf-8",
-        dataType: "json",
-        async: false,
-        success: function (result) {
-            //debugger;
-            var html = '';
-            $.each(result, function (key, Employee) {
-                //debugger;
-                html += '<tr>';
-                html += '<td>' + Employee.Email + '</td>';
-                html += '<td>' + Employee.Username + '</td>';
-                html += '<td>' + Employee.Role.Name + '</td>';
-                html += '<td><a href="#" class="fa fa-pencil" data-toggle="tooltip" title="Edit" id="Update" onclick="return GetbyId(' + Employee.id + ')"></a> |';
-                html += ' <a href="#" class="fa fa-trash" data-toggle="tooltip" title="Delete" id="Delete" onclick="return Delete(' + Employee.id + ')" ></button ></td > ';
-                html += '</tr>';
-                html += '</tr>';
-                html += '</tr>';
-            });
-            $('.employeesbody').html(html);
-        },
-        error: function (errormessage) {
-            alert(errormessage.responseText);
-        }
-    });
-}
+//function loadEmployees() {
+//    //debugger;
+//    $.ajax({
+//        url: "/Employees/List",
+//        type: "GET",
+//        contentType: "application/json;charset=utf-8",
+//        dataType: "json",
+//        async: false,
+//        success: function (result) {
+//            //debugger;
+//            var html = '';
+//            $.each(result, function (key, Employee) {
+//                //debugger;
+//                html += '<tr>';
+//                html += '<td>' + Employee.Email + '</td>';
+//                html += '<td>' + Employee.Username + '</td>';
+//                html += '<td>' + Employee.Role.Name + '</td>';
+//                html += '<td><a href="#" class="fa fa-pencil" data-toggle="tooltip" title="Edit" id="Update" onclick="return GetbyId(' + Employee.id + ')"></a> |';
+//                html += ' <a href="#" class="fa fa-trash" data-toggle="tooltip" title="Delete" id="Delete" onclick="return Delete(' + Employee.id + ')" ></button ></td > ';
+//                html += '</tr>';
+//                html += '</tr>';
+//                html += '</tr>';
+//            });
+//            $('.employeesbody').html(html);
+//        },
+//        error: function (errormessage) {
+//            alert(errormessage.responseText);
+//        }
+//    });
+//}
 
 var Roles = []
 function LoadRole(element) {
@@ -82,10 +98,10 @@ function renderRole(element) {
         $ele.append($('<option/>').val(val.id).text(val.Name));
     })
 }
-LoadRole($('#Role'));
+LoadRole($('#Role_id'));
 
 function Save() {
-    debugger;
+    //debugger;
     if ($('#Email').val() == 0) {
         Swal.fire({
             position: 'center',
@@ -113,10 +129,11 @@ function Save() {
     //    });
     //}
     else {
+        debugger;
         var User = new Object();
         User.Email = $('#Email').val();
         User.Username = $('#Username').val();
-        User.Role = $('#Role').val();
+        User.Role_id = $('#Role_id').val();
         $.ajax({
             type: 'POST',
             url: '/Employees/InsertOrUpdate/',
@@ -129,7 +146,7 @@ function Save() {
                     type: 'success',
                     title: 'User Added Successfully'
                 });
-                loadEmployees();
+                table.ajax.reload();
             } else {
                 Swal.fire('Error', 'Failed to Delete', 'error');
                 ClearScreen();
@@ -137,7 +154,7 @@ function Save() {
         })
     }
 }
-function GetbyId(id) {
+function GetById(id) {
     //debugger;
     $.ajax({
         url: "/Employees/GetbyId/",
@@ -150,7 +167,7 @@ function GetbyId(id) {
             $('#Id').val(result.id);
             $('#Email').val(result.Email);
             $('#Username').val(result.Username);
-            $('#Role').val(result.Role);
+            $('#Role_id').val(result.Role_id);
             $('#myModal').modal('show');
             $('#Update').show();
             $('#Save').hide();
@@ -189,11 +206,12 @@ function Update() {
     //    });
     //}
     else {
+        debugger;
         var User = new Object();
         User.id = $('#Id').val();
         User.Email = $('#Email').val();
         User.Username = $('#Username').val();
-        User.Role = $('#Role').val();
+        User.Role_id = $('#Role_id').val();
         $.ajax({
             type: "POST",
             url: '/Employees/InsertOrUpdate/',
@@ -206,7 +224,7 @@ function Update() {
                     type: 'success',
                     title: 'User Updated Successfully'
                 });
-                loadEmployees();
+                table.ajax.reload();
             } else {
                 Swal.fire('Error', 'Failed to Delete', 'error');
                 ClearScreen();
@@ -237,7 +255,7 @@ function Delete(id) {
                         type: 'success',
                         title: 'Delete Successfully'
                     });
-                    loadRole();
+                    table.ajax.reload();
                 } else {
                     Swal.fire('Error', 'Failed to Delete', 'error');
                     ClearScreen();

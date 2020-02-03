@@ -1,11 +1,26 @@
-﻿$(document).ready(function () {
-    $('#myTable').DataTable({
-        "columnDefs": [{
-            "orderable": false,
-            "targets": 1
-        }],
-        "ajax": loadRole(),
-        "responsive": true
+﻿var table = null;
+
+$(document).ready(function () {
+    debugger;
+    table = $('#myTable').DataTable({
+        "ajax": {
+            url: "/Roles/List",
+            type: "GET",
+            dataType: "json"
+        },
+        "columnDefs":
+            [{
+                "targets": [1],
+                "orderable": false
+            }],
+        "columns": [
+            { "data": "Name" },
+            {
+                "render": function (data, type, row) {
+                    return '<button class="btn btn-warning " data-placement="left" data-toggle="tooltip" data-animation="false" title="Edit" onclick="return GetById(' + row.Id + ')"> <i class="mdi mdi-pencil"></i></button >' + '&nbsp;' +
+                        '<button class="btn btn-danger" data-placement="right" data-toggle="tooltip" data-animation="false" title="Delete" onclick="return Delete(' + row.Id + ')"> <i class="mdi mdi-eraser"></i></button >'
+                }
+            }]
     });
 });
 
@@ -22,34 +37,32 @@ function ClearScreen() {
     $('#Save').show();
 }
 
-function loadRole() {
-    //debugger;
-    $.ajax({
-        url: "/Roles/List",
-        type: "GET",
-        contentType: "application/json;charset=utf-8",
-        dataType: "json",
-        async: false,
-        success: function (result) {
-            //debugger;
-            var html = '';
-            $.each(result, function (key, Role) {
-                //debugger;
-                html += '<tr>';
-                html += '<td>' + Role.Name + '</td>';
-                html += '<td><a href="#" class="fa fa-pencil" data-toggle="tooltip" title="Edit" id="Update" onclick="return GetbyId(' + Role.id + ')"></a> |';
-                html += ' <a href="#" class="fa fa-trash" data-toggle="tooltip" title="Delete" id="Delete" onclick="return Delete(' + Role.id + ')" ></button ></td > ';
-                html += '</tr>';
-                html += '</tr>';
-                html += '</tr>';
-            });
-            $('.rolebody').html(html);
-        },
-        error: function (errormessage) {
-            alert(errormessage.responseText);
-        }
-    });
-}
+//function loadRole() {
+//    //debugger;
+//    $.ajax({
+//        url: "/Roles/List",
+//        type: "GET",
+//        contentType: "application/json;charset=utf-8",
+//        dataType: "json",
+//        async: false,
+//        success: function (result) {
+//            //debugger;
+//            var html = '';
+//            $.each(result, function (key, Role) {
+//                //debugger;
+//                html += '<tr>';
+//                html += '<td>' + Role.Name + '</td>';
+//                html += '<td><a href="#" class="fa fa-pencil" data-toggle="tooltip" title="Edit" id="Update" onclick="return GetbyId(' + Role.id + ')"></a> |';
+//                html += ' <a href="#" class="fa fa-trash" data-toggle="tooltip" title="Delete" id="Delete" onclick="return Delete(' + Role.id + ')" ></button ></td > ';
+//                html += '</tr>';
+//            });
+//            $('.rolebody').html(html);
+//        },
+//        error: function (errormessage) {
+//            alert(errormessage.responseText);
+//        }
+//    });
+//}
 
 function Save() {
     //debugger;
@@ -76,7 +89,7 @@ function Save() {
                     type: 'success',
                     title: 'Role Added Successfully'
                 });
-                loadRole();
+                table.ajax.reload();
             } else {
                 Swal.fire('Error', 'Failed to Delete', 'error');
                 ClearScreen();
@@ -84,7 +97,7 @@ function Save() {
         })
     }
 }
-function GetbyId(id) {
+function GetById(id) {
     debugger;
     $.ajax({
         url: "/Roles/GetbyId/",
@@ -131,7 +144,7 @@ function Update() {
                     type: 'success',
                     title: 'Role Updated Successfully'
                 });
-                loadRole();
+                table.ajax.reload();
             } else {
                 Swal.fire('Error', 'Failed to Delete', 'error');
                 ClearScreen();
@@ -162,7 +175,7 @@ function Delete(id) {
                         type: 'success',
                         title: 'Delete Successfully'
                     });
-                    loadRole();
+                    table.ajax.reload();
                 } else {
                     Swal.fire('Error', 'Failed to Delete', 'error');
                     ClearScreen();
